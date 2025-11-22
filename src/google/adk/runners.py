@@ -1142,8 +1142,13 @@ class Runner:
       # This handles cases where invocation IDs might have drifted or for generic resume
       for event in reversed(session.events):
         if event.author == 'user' and event.content:
-           user_message = event.content
-           break
+          logger.warning(
+              'Could not find user message for invocation %s. Falling back to ' 
+              'the latest user message in the session.',
+              invocation_id,
+           )
+          user_message = event.content
+          break
     # === [END FIX] ===
 
     if not user_message:
