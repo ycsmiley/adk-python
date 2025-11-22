@@ -1127,6 +1127,7 @@ class Runner:
       ValueError: If the session has no events to resume; If no user message is
         available for resuming the invocation; Or if the app is not resumable.
     """
+
     if not session.events:
       raise ValueError(f'Session {session.id} has no events to resume.')
 
@@ -1134,6 +1135,17 @@ class Runner:
     user_message = new_message or self._find_user_message_for_invocation(
         session.events, invocation_id
     )
+
+    # === [START FIX] Fallback mechanism ===
+    if not user_message and session.events:
+      # If exact invocation match failed, try to find the latest user message
+      # This handles cases where invocation IDs might have drifted or for generic resume
+      for event in reversed(session.events):
+        if event.author == 'user' and event.content:
+           user_message = event.content
+           break
+    # === [END FIX] ===
+
     if not user_message:
       raise ValueError(
           f'No user message available for resuming invocation: {invocation_id}'
