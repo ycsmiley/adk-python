@@ -1145,10 +1145,10 @@ class Runner:
       for event in reversed(session.events):
         if event.author == 'user' and event.content:
           logger.warning(
-              'Could not find user message for invocation %s. Falling back to ' 
+              'Could not find user message for invocation %s. Falling back to '
               'the latest user message in the session.',
               invocation_id,
-           )
+          )
           user_message = event.content
           break
     # === [END FIX] ===
